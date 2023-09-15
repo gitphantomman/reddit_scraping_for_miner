@@ -38,5 +38,5 @@ This repository provides tools for scraping data from Reddit. The scraped result
 3. To view the results, use a database management tool such as `dbeaver-ce`.
 
 ---
-![Alt text](image-1.png)
-![Alt text](image.png)
+![Alt text](./docs/image-1.png)
+![Alt text](./docs/image.png)
