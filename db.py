@@ -25,6 +25,14 @@ Base.metadata.create_all(engine)
 
 
 def store_data(submission):
+    """Stores Reddit posts to the database.
+
+    Args:
+        submission (lsit[RedditPost]): The list of posts to store.
+
+    Returns:
+
+    """
     Session = sessionmaker(bind = engine)
     session = Session()
     dt_object = datetime.fromtimestamp(submission.created_utc)    
@@ -39,3 +47,56 @@ def store_data(submission):
     finally:
         session.close()
         
+def fetch_data(post_id=None):
+    """Fetches Reddit posts from the database.
+
+    Args:
+        post_id (str, optional): The ID of a specific post to fetch. If None, fetches all posts. Defaults to None.
+
+    Returns:
+        list[RedditPost]: List of RedditPost objects.
+    """
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    try:
+        if post_id:
+            # Fetch a specific post by its ID.
+            post = session.query(RedditPost).filter_by(id=post_id).first()
+            return [post] if post else []
+
+        else:
+            # Fetch all posts.
+            posts = session.query(RedditPost).all()
+            return posts
+
+    except Exception as e:
+        print(f"Error while fetching data: {e}")
+        return []
+
+    finally:
+        session.close()
+
+def fetch_latest_posts(n):
+    """Fetches the latest N Reddit posts from the database based on their creation date.
+
+    Args:
+        n (int): Number of latest posts to fetch.
+
+    Returns:
+        list[RedditPost]: List of N latest RedditPost objects.
+    """
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    try:
+        # Fetch the latest N posts.
+        posts = session.query(RedditPost).order_by(RedditPost.created_utc.desc()).limit(n).all()
+        return posts
+
+    except Exception as e:
+        print(f"Error while fetching data: {e}")
+        return []
+
+    finally:
+        session.close()
